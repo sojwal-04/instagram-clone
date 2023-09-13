@@ -1,0 +1,48 @@
+$default-icon-size: 30px;
+$hover-icon-size: 32px;
+
+.leftbar-container {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  padding-top: 30px;
+  gap: 40px;
+  width: 250px;
+  border-right: 1px solid rgba(224, 219, 219, 0.75);
+
+  .insta-name {
+    width: 150px;
+    padding-left: 20px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .list-item {
+      display: flex;
+      align-items: center;
+
+      .icon {
+        font-size: 30px;
+        margin-right: 10px; /* Adjust the value as needed */
+        font-size: $default-icon-size;
+        transition: font-size 0.3s;
+
+        &:hover {
+          font-size: $hover-icon-size;
+        }
+      }
+
+      .text {
+        font-size: 30px;
+        margin-left: 5px; /* Adjust the value as needed */
+      }
+    }
+  }
+}

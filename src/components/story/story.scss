@@ -1,0 +1,36 @@
+.story-container {
+  width: 70px;
+  --w:60px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 2px 5px;
+
+  .story-image {
+    width: var(--w);
+    height: var(--w);
+    border-radius: 50%;
+    overflow: hidden;
+    padding: 2px;
+    border: 1.5px solid rgb(136, 121, 121);
+
+    img{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+
+  .story-username {
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.75);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+}

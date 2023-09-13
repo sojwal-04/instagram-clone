@@ -1,0 +1,13 @@
+.posts-container {
+  margin:0 auto;
+  // background: red;
+  max-width: 450px;
+  // background: rgba(0, 0, 0, 0.1);
+
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 30px 0;
+}

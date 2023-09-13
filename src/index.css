@@ -31,9 +31,10 @@
 /* Common classes to use */
 
 .container {
-  max-width: 90%;
+  /* max-width: 90%; */
   margin-left: auto;
   margin-right: auto;
+  /* background-color: blue; */
 }
 
 
