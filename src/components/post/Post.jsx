@@ -10,28 +10,42 @@ import { BsThreeDots } from "react-icons/bs"
 import { FcLike } from "react-icons/fc"
 import ShareIcon from "../../assets/ShareIcon";
 import LikeIcon from "../../assets/LikeIcon";
+import {formatDistanceToNow} from "date-fns"
+import { useNavigate } from "react-router-dom";
 
-const Post = ({ post }) => {
+const Post = ({ post}) => {
+
+    const navigate = useNavigate();
 
   const [color, setColor] = useState("black");
-
   const [like, setLike] = useState(false);
-
   const [openComment, setOpenComment] = useState(false);
+  
+
+  let timeStamp = formatDistanceToNow(new Date(post?.createdAt), {
+    addSuffix: false, // Adds "ago" or "from now"
+  });
+
+  const gotoProfile = () => {
+    navigate()
+  }
+
 
   return (
-    <div className="post-container">
+    <div  className="post-container">
 
       <div className="profile-details">
         <div className="left">
           <div className="profilePic">
-            <img src={post?.profilePic} alt="profilePic" />
+            <img src={post?.user?.profilePic} alt="profilePic" />
           </div>
-          <div className="username">
-            {post?.username}
+          <div className="username" onClick={gotoProfile}>
+            {post?.user?.username}
+            {/* sojwalgosavi */}
           </div>
           <div className="createdAt">
-            {post?.createdAt}
+            {/* {post?.createdAt} */}
+            {timeStamp}
           </div>
         </div>
         <div className="right">
@@ -64,7 +78,7 @@ const Post = ({ post }) => {
         </div>
 
         <div className="likes-count">
-          {`${post?.likes} likes`}
+          {`${post?.likes ?? 0} likes`}
         </div>
 
         <div className="comments-count">

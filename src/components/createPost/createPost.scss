@@ -35,7 +35,8 @@
       padding: 8px 15px;
       border-radius: 5px;
       transition: all;
-      transition-duration: 100ms;
+      transition-duration: 200ms;
+      cursor: pointer;
 
       &:hover {
         background: rgb(24, 119, 242);

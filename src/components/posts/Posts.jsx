@@ -1,50 +1,60 @@
+
 import "./posts.scss"
 
 import { useEffect, useState } from "react";
 
-import { posts } from "../../data"
+// import { posts } from "../../data"
 import Post from "../post/Post";
-import instance from "../../axios/axios";
+import axios from "axios";
+import { makeRequest } from "../../utils/makeRequest";
+import { useSelector } from "react-redux";
+// import instance from "../../axios/axios";
+
+// const baseUrl = import.meta.env.VITE_APP_BASE_URL;
 
 const Posts = () => {
-
-  /*
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(null);
+  const user = useSelector((state) => state.user.user);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Define your fetchPosts function
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-
-      const response = await instance.get("/posts");
-      const data = await response.json();
-
-      setPosts(data);
-      setLoading(false);
-      setError(null);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    const fetchPosts = async () => {
 
-  */
+      console.log("user, ", user);
+      console.log("id", user._id);
+
+      if (user && user._id) {
+        try {
+          setLoading(true);
+          const { data } = await makeRequest.get(`/posts/getPosts?userId=${user?._id}`);
+          setLoading(false);
+          setPosts(data.posts);
+        } catch (err) {
+          setError(err);
+          setLoading(false);
+        }
+      } else {
+        // Handle the case when user data is not available
+        setLoading(false);
+        setError("User data not available");
+      }
+    };
+
+    fetchPosts();
+  }, [user]);
 
   return (
     <div className="posts-container">
-      {
-        posts?.map((post) => (<Post key={post?.id} post={post} />))
-      }
+      {loading ? (
+        <p style={{ color: "green" }}>Loading</p>
+      ) : error ? (
+        <p style={{ color: "red" }}>Error: {error.message}</p>
+      ) : (
+        posts?.map((post) => <Post key={post._id} post={post} />)
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default Posts
+export default Posts;

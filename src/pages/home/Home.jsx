@@ -9,15 +9,15 @@ import CreatePost from "../../components/createPost/CreatePost"
 const Home = () => {
   return (
     <div className="container home-container">
-      {/* <LeftBar /> */}
-{/*       
+      <LeftBar />
+      
      <Main/>
      <RightBar/>
-      */}
+     
 
       {/* <Profile/> */}
 
-      <CreatePost/>
+      {/* <CreatePost/> */}
     </div>
   )
 }

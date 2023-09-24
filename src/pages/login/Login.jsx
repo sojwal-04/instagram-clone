@@ -1,8 +1,7 @@
 import "./login.scss"
 
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
-import axios from "axios"
+import { Link, useNavigate } from "react-router-dom"
 
 import InstaHubName from "../../assets/instahub.png"
 import InstaImageBg from "../../assets/home-phones-bg.png"
@@ -14,13 +13,24 @@ import PlayStore from "../../assets/playStore.png"
 import MicrosoftStore from "../../assets/microsoftStore.png"
 import Footer from "../../components/footer/Footer"
 import toast from "react-hot-toast"
+// import useFetch from "../../hooks/useFetch"
+import axios from "axios"
+import { useDispatch } from "react-redux"
+import { setToken } from "../../redux/slices/authSlice"
+import { setUser } from "../../redux/slices/userSlice"
 
 const screenshots = [ScreenShot1, ScreenShot2, ScreenShot3, ScreenShot4];
 
 //LACKS LOGIN FUNCTIONLITY
 
+const baseUrl = import.meta.env.VITE_APP_BASE_URL;
+
 
 const Login = () => {
+
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const [index, setIndex] = useState(0);
   const [error, setError] = useState(null);
@@ -45,27 +55,48 @@ const Login = () => {
     }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
+      const { data } = await axios.post(`${baseUrl}/auth/login`, inputs, {
+        withCredentials: true,
+      });
 
-      const res = await axios.post("http://localhost:8001/api/v1/users/login", inputs)
+      const { token, user } = data;
 
-      if(res?.data?.success) {
-        console.log("User logged in successfully");
-        toast.success(res.data.message)
-      }else {
-        console.log("Login failed");
-        toast.error(res.data.message)
-      }
+      dispatch(setToken(token));
+      dispatch(setUser(user));
 
+      console.log("data:", data);
+
+      console.log("token: " + token);
+      console.log("user: " + JSON.stringify(user));
+
+      localStorage.setItem("token", token);
+      // localStorage.setItem("user", user);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate("/")
+      toast.success(`${inputs.identifier} logged in`);
     } catch (err) {
-      console.log("Error while logging in : ", err);
-      setError(err);
-      toast.error(error)
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // other than 2xx, so you can handle specific error codes here.
+        if (err.response.status === 404) {
+          toast.error("User not found. Please check your credentials.");
+        } else if (err.response.status === 401) {
+          toast.error("Incorrect password. Please try again.");
+        } else if(err.response.status === 400){
+          toast.error("An error occurred. Please check your connection.");
+        }
+      } else if (err.request) {
+        // The request was made but no response was received (e.g., network error).
+        toast.error("Network error. Please check your internet connection.");
+      } else {
+        // Something happened in setting up the request that triggered an error.
+        toast.error("An error occurred. Please try again later.");
+      }
     }
   }
-
-  console.log(inputs);
 
   return (
     <>
@@ -87,7 +118,7 @@ const Login = () => {
               <img src={InstaHubName} alt="" />
             </div>
             <div className="form">
-              <form action="" onSubmit={handleSubmit}>
+              <form action="" onSubmit={handleLogin}>
                 <input
                   type="text"
                   name="identifier"
@@ -111,7 +142,7 @@ const Login = () => {
           </div>
 
           <div>
-            Don't have an account? <Link className="link" to="/accounts/emailsignup">Sign Up</Link>
+            Don't have an account? <Link className="link" to="/signup">Sign Up</Link>
           </div>
 
           <div>
