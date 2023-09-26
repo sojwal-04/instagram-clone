@@ -12,31 +12,62 @@
   .user {
     display: flex;
     justify-content: space-between;
-    background: green;
+    // background: green;
     margin-bottom: 30px;
 
     .left {
       // background-color: red;
+      position: relative;
       width: 34%;
       display: flex;
       align-items: center;
       justify-content: center;
-
+      /*
       .profilePic {
-        width: 60px;
-        height: 60px;
+        height: 80%;
+        position: absolute;
+        top: 0;
+        aspect-ratio: 1/1;
         border-radius: 50%;
+        border: 1px solid black;
+        background-color: rgba(0, 0, 0, 0.114);
+        object-fit: cover;
+        overflow: hidden;
 
         img {
+          padding: 2px;
           width: 90%;
           height: 90%;
           border-radius: 50%;
         }
       }
+      */
+
+      .profilePic {
+        position: absolute;
+        top: 0;
+        height: 150px;
+        width: 150px;
+        // aspect-ratio: 1/1;
+        border-radius: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.49);
+        background-color: rgba(26, 237, 244, 0.925);
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        overflow: hidden;
+      
+        img {
+          width: 97%; /* Use 100% to fill the .profilePic div */
+          height: 97%; /* Use 100% to fill the .profilePic div */
+          border-radius: 50%;
+          object-fit: cover;
+        }
+      }
     }
 
     .right {
-      background-color: yellow;
+      // background-color: yellow;
       width: 66%;
       display: flex;
       flex-direction: column;
@@ -44,16 +75,45 @@
 
       .user-details {
         display: flex;
+        gap: 20px;
+
+        button {
+          border: none;
+          padding: 5px 10px;
+          background: rgba(234, 230, 230);
+          color: black;
+          opacity: 0.9;
+          font-weight: bold;
+          border-radius: 4px;
+          cursor: pointer;
+        }
       }
 
       .user-status {
         display: flex;
+        justify-content: start;
+        gap: 30px;
 
-        // div {
-        //   display: flex;
-        // }
+        div {
+          // background-color: red;s
+          display: flex;
+          gap: 10px;
+
+          span {
+            font-weight: bold;
+          }
+        }
+      }
+
+      .name {
+        font-weight: bold;
       }
     }
+  }
+
+  hr {
+    background-color: red;
+    margin-bottom: 20px;
   }
 
   //PROFILE
@@ -85,6 +145,7 @@
 
       .post-info {
         color: whitesmoke;
+        font-weight: bold;
         position: absolute;
         font-size: 16px;
         left: 50%;
@@ -94,6 +155,7 @@
         transition-duration: 200ms;
         z-index: 10;
         opacity: 0;
+        gap: 10px;
 
         #likes {
           display: flex;

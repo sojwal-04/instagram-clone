@@ -6,6 +6,7 @@ import UserHome from './pages/userHome/UserHome'
 // import Home from './pages/home/Home'
 import ProtectedRoute from './ProtectedRoute'
 import Home from './pages/home/Home'
+import Profile from './pages/profile/Profile'
 // import Profile from './pages/profile/Profile'
 
 
@@ -30,8 +31,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/:username"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
           {/* <Route path="/" element={<Home/>}/> */}
-          {/* <Route path="/profile/:userId" element={<Profile/>}/> */}
         </Routes>
 
       </div>

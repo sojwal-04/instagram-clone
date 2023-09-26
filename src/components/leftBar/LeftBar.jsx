@@ -1,7 +1,7 @@
 import "./leftBar.scss"
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 
@@ -19,10 +19,14 @@ import { setToken } from "../../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../../redux/slices/userSlice";
 
+import SS from "../../assets/screenshot2.png"
+
 const LeftBar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const user = useSelector((state) => state.user.user);
 
   const handleLogout = () => {
 
@@ -64,35 +68,41 @@ const LeftBar = () => {
       > */}
 
       <List className='list'>
-        <ListItem button key="home" className="list-item">
+        <ListItem key="home" onClick={() => navigate("/")} className="list-item">
           <HomeRoundedIcon className="icon" />
           <ListItemText primary="Home" className="text" />
         </ListItem>
-        <ListItem button key="search" className="list-item">
+        <ListItem key="search" className="list-item">
           <SearchRoundedIcon className="icon" />
           <ListItemText primary="Search" className="text" />
         </ListItem>
-        <ListItem button key="explore" className="list-item">
+        <ListItem key="explore" className="list-item">
           <ExploreRoundedIcon className="icon" />
           <ListItemText primary="Explore" className="text" />
         </ListItem>
-        <ListItem button key="reels" className="list-item">
+        <ListItem key="reels" className="list-item">
           <MovieCreationRoundedIcon className="icon" />
           <ListItemText primary="Reels" className="text" />
         </ListItem>
-        <ListItem button key="messages" className="list-item">
+        <ListItem key="messages" className="list-item">
           <ChatBubbleOutlineRoundedIcon className="icon" />
           <ListItemText primary="Messages" className="text" />
         </ListItem>
-        <ListItem button key="notifications" className="list-item">
+        <ListItem key="notifications" className="list-item">
           <FavoriteBorderRoundedIcon className="icon" />
           <ListItemText primary="Notifications" className="text" />
         </ListItem>
-        <ListItem button key="create" className="list-item">
+        <ListItem key="create" className="list-item">
           <ControlPointRoundedIcon className="icon" />
           <ListItemText primary="Create" className="text" />
         </ListItem>
-        <ListItem button key="logout" className="list-item" onClick={handleLogout}>
+        <ListItem key="profile" onClick={() => navigate(`/${user?.username}`)} className="list-item">
+          <div className="icon profilePic">
+            <img src={user?.profilePic} alt="" />
+          </div>
+          <ListItemText primary="Profile" className="text" />
+        </ListItem>
+        <ListItem key="logout" className="list-item" onClick={handleLogout}>
           <LogoutIcon className="icon" />
           <ListItemText primary="Logout" className="text" />
         </ListItem>
