@@ -1,7 +1,7 @@
 import "./profile.scss"
 // import numeral from "numeral";
 // import { posts } from "../../data"
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import CommentIcon from "../../assets/CommentIcon";
 import Footer from "../../components/footer/Footer";
@@ -9,36 +9,22 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { makeRequest } from "../../utils/makeRequest";
 import toast from "react-hot-toast";
+import { setProfile } from "../../redux/slices/profileSlice";
 
 const Profile = () => {
 
-  const [following, setFollowing] = useState(true);
-  const [posts, setPosts] = useState([]);
-
-  const [profileDetails, setProfileDetails] = useState({
-    _id: null,
-    username: "",
-    profilePic: "",
-    name: "",
-    postCount: 0,
-    followingCount: 0,
-    followersCount: 0,
-  })
-
-
+  const dispatch = useDispatch();
 
   const { username } = useParams();
 
-  console.log("Parameters:", username);
+  const [following, setFollowing] = useState(null);
+  const [posts, setPosts] = useState([]);
+
+  const profileDetails = useSelector((state) => state.profile.profileDetails);
 
   const myUser = useSelector(state => state.user.user)
   // /*
   const user = {
-    // username: `sojwal._`,
-    // posts: 89,
-    // followings: 190,
-    // followers: 290,
-    name: "Sojwal",
     userBio: "Attitude is Everything",
     likes: 100,
     comments: 34
@@ -47,13 +33,24 @@ const Profile = () => {
 
   const handleFollow = async () => {
     try {
-      const url = `/relationships/${following ? 'unfollow' : 'follow'}?followerId=${user?._id}&userIdToFollow=${profileDetails?._id}`;
-      if (following) {
+      let url;
+      const updatedProfileDetails = { ...profileDetails }; // Create a copy of profileDetails
+
+      if (following !== null && following) {
+        url = `/relationships/unfollow?followerId=${myUser?._id}&userIdToUnfollow=${profileDetails?._id}`;
         await makeRequest.delete(url);
-      } else {
+        updatedProfileDetails.followersCount--; // Decrement followingCount
+      } else if (following !== null) {
+        url = `/relationships/follow?followerId=${myUser?._id}&userIdToFollow=${profileDetails?._id}`;
         await makeRequest.post(url);
+        updatedProfileDetails.followersCount++; // Increment followingCount
       }
       setFollowing(!following);
+
+      // Dispatch an action to update the Redux store with the updated profileDetails
+      dispatch(setProfile(updatedProfileDetails));
+
+      toast.success(`Successfully ${!following ? 'followed' : 'unfollowed'} ${profileDetails?.username}`);
     } catch (err) {
       console.log(err);
       toast.error(`Error while ${following ? 'unfollowing' : 'following'}. Try Again`)
@@ -61,55 +58,64 @@ const Profile = () => {
   }
 
 
+  const fetchRelationship = async () => {
+    try {
+      console.log("Fetching relationship");
+      const { data } = await makeRequest.get(`/relationships/fetchRelationship?follower=${myUser?.username}&following=${username}`);
+      console.log("Fetching relationship 2");
+      setFollowing(JSON.stringify(data.relationship) ? true : false)
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
+
+  const fetchProfileDetails = async () => {
+    try {
+      const { data } = await makeRequest.get(`/profile/${username}`);
+
+      console.log("inside the functinosss");
+
+      const profileData = data?.profileDetails;
+
+      console.log("Setting details ; ", profileData);
+
+      // Dispatch the setProfile action to update Redux store
+      dispatch(setProfile(profileData));
+
+      fetchRelationship();
+    } catch (err) {
+      console.log(err);
+      toast.error("Error while fetching profile details");
+    }
+  };
+
+
+  /*
+  const fetchPosts = async () => {
+    try {
+      // Fetch user's posts using the user's username (profileDetails.username)
+      const { data } = await makeRequest.get(`/posts/${profileDetails.username}`);
+
+      // Update the posts state with the fetched data
+      setPosts(data.posts);
+
+      console.log("Fetched posts:", data.posts);
+    } catch (err) {
+      console.log(err);
+      toast.error("Error while fetching posts");
+    }
+  };
+
+  */
 
   useEffect(() => {
-    const fetchProfileDetails = async () => {
-      try {
-        const { data } = await makeRequest.get(`/profile/${username}`);
-
-        setProfileDetails(data.profileDetails);
-
-        console.log("Above2");
-        console.log("profile details :", data.profileDetails);
-
-      } catch (err) {
-        console.log(err);
-        toast.error("Error while fetching profile details");
-      }
-    };
-
-    const fetchPosts = async () => {
-      try {
-        // Fetch user's posts using the user's username (profileDetails.username)
-        const { data } = await makeRequest.get(`/posts/${profileDetails.username}`);
-
-        // Update the posts state with the fetched data
-        setPosts(data.posts);
-
-        console.log("Fetched posts:", data.posts);
-      } catch (err) {
-        console.log(err);
-        toast.error("Error while fetching posts");
-      }
-    };
-
-    const fetchRelationship = async () => {
-      try {
-        console.log("Above1");
-        const response = await makeRequest.get(`/relationships/?followerId=${user?._id}&userIdToFollow=${profileDetails?._id}`);
-
-        console.log("response :", response);
-
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
     fetchProfileDetails();
-    fetchPosts(); // Call the fetchPosts function to fetch the user's posts.
-    fetchRelationship();
+    // fetchPosts(); // Call the fetchPosts function to fetch the user's posts.
 
-  }, [username]);
+  }, [username]); // Include fetchRelationship as a dependency
+
 
   // ... (rest of the code)
 
@@ -130,11 +136,13 @@ const Profile = () => {
             {
               myUser?.username === username ?
                 (
-                  <button className="edit">Edit Profile</button>
+                  <button >Edit Profile</button>
                 )
                 :
                 (
-                  <button onClick={handleFollow} className="delete">{following ? "Unfollow" : "Follow"}</button>
+                  <button onClick={handleFollow} className={!following ? 'btn-primary' : ''}>
+                    {following === null ? "Loading" : (following ? "Unfollow" : "Follow")}
+                  </button>
                 )
             }
 
