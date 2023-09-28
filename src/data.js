@@ -100,4 +100,105 @@ const posts = [
   },
 ];
 
-export { posts };
+const comments = [
+  {
+    id: 1,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "sojwal._",
+    text: "Alina is Love. Hi sweet kid",
+  },
+  {
+    id: 2,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "user123",
+    text: "Another comment here Another comment here Another comment hereAnother comment here",
+  },
+  {
+    id: 3,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter456",
+    text: "A different comment",
+  },
+  {
+    id: 4,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "sample_user",
+    text: "Comment number four",
+  },
+  {
+    id: 5,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter_XYZ",
+    text: "Yet another comment",
+  },
+  {
+    id: 6,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "user567",
+    text: "Comment number six",
+  },
+  {
+    id: 7,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "random_user123",
+    text: "A comment from a random user",
+  },
+  {
+    id: 8,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter789",
+    text: "This comment is different",
+  },
+  {
+    id: 9,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "user_abc",
+    text: "Comment number nine",
+  },
+  {
+    id: 10,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter_xyz",
+    text: "The last comment",
+  },
+  {
+    id: 11,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter_xyz11",
+    text: "The last comment",
+  },
+  {
+    id: 12,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter_xyz",
+    text: "The last comment",
+  },
+  {
+    id: 13,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter_xyz13",
+    text: "The last comment",
+  },
+  {
+    id: 14,
+    imageUrl:
+      "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
+    username: "commenter_xyz14",
+    text: "The last comment",
+  },
+];
+
+export { posts, comments };

@@ -1,0 +1,172 @@
+$padding: 10px;
+
+.showpost-container {
+  position: absolute;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .showpost {
+    background: white;
+    width: 60%;
+    height: 90%;
+    display: flex;
+
+    .left {
+      max-width: 55%;
+      min-width: 45%;
+      object-fit: cover;
+      background-color: rgba(0, 0, 0);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 101%;
+      }
+    }
+
+    .right {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+
+      .top {
+        display: flex;
+        justify-content: space-between;
+        padding: $padding;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.451);
+
+        .top-left {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+
+          .profilePic {
+            // background-color: red;
+            border: 1px solid black;
+            height: 30px;
+            width: 30px;
+            object-fit: cover;
+            overflow: hidden;
+            border-radius: 50%;
+
+            img {
+              width: 101%;
+            }
+          }
+
+          p {
+            font-weight: 500;
+          }
+        }
+        .top-right {
+        }
+      }
+
+      .comments {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: $padding;
+        overflow: scroll;
+
+        &::-webkit-scrollbar {
+          width: 0;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: rgb(107, 107, 107);
+        }
+
+        .comment {
+          display: flex;
+          gap: 10px;
+          // background: red;
+          padding: $padding 0;
+
+          .profilePic {
+            // background-color: red;
+            border: 1px solid black;
+            flex: 0 0 auto; /* Prevent flex shrink and grow */
+            height: 30px;
+            width: 30px;
+            object-fit: cover;
+            overflow: hidden;
+            border-radius: 50%;
+
+            img {
+              width: 101%;
+              height: auto;
+            }
+          }
+
+          .comment-content {
+            font-size: 14px;
+            flex: wrap;
+
+            #username {
+              cursor: pointer;
+            }
+
+            span {
+              font-weight: bold;
+            }
+          }
+        }
+      }
+
+      .post-details {
+        padding: $padding;
+        border-top: 1px solid rgba(0, 0, 0, 0.451);
+        .icons {
+          display: flex;
+          gap: 10px;
+
+          .icon {
+            cursor: pointer;
+          }
+        }
+
+        .add-comment {
+          display: flex;
+
+          input {
+            background-color: whitesmoke;
+            border: none;
+            padding: 12px;
+            flex-grow: 1;
+            border-radius: 5px;
+            color: black;
+            font-weight: 500;
+          }
+
+          input:focus {
+            outline: blue; /* Remove the default outline */
+            border-color: blue; /* Use the initial border color (if defined) */
+          }
+
+          .post-btn {
+            appearance: none;
+            border: none;
+            color: rgba(0, 148, 246, 0.75);
+            padding: 5px 10px;
+            background-color: white;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+// .show {
+// }

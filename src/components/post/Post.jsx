@@ -12,13 +12,15 @@ import ShareIcon from "../../assets/ShareIcon";
 import LikeIcon from "../../assets/LikeIcon";
 import { formatDistanceToNow } from "date-fns"
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { makeRequest } from "../../utils/makeRequest";
 
 const Post = ({ post }) => {
 
   const navigate = useNavigate();
 
   const [color, setColor] = useState("black");
-  const [like, setLike] = useState(false);
+  const [like, setLike] = useState(null);
   const [openComment, setOpenComment] = useState(false);
 
 
@@ -26,10 +28,21 @@ const Post = ({ post }) => {
     addSuffix: false, // Adds "ago" or "from now"
   });
 
-  const gotoProfile = () => {
-    navigate(`/${post?.user?.username}`);
-  }
+  const handleLike = async () => {
+    try {
+      if (like !== null && like) {
+        await makeRequest.delete();
+      } else if (like !== null) {
+        await makeRequest.post();
+      }
+      setLike(!like)
+      toast.success(`${like ? "Unliked" : "Liked"} the post`)
 
+    } catch (err) {
+      console.log(err);
+      toast.error(`Cannot ${like ? "unlike" : "like"} the post`)
+    }
+  }
 
   return (
     <div className="post-container">
@@ -38,7 +51,7 @@ const Post = ({ post }) => {
           <div className="profilePic">
             <img src={post?.user?.profilePic} alt="profilePic" />
           </div>
-          <div className="username" onClick={gotoProfile}>
+          <div className="username" onClick={() => navigate(`/${post?.user?.username}`)}>
             <div className=" reference-link username">
               {post?.user?.username}
             </div>
@@ -59,7 +72,7 @@ const Post = ({ post }) => {
       <div className="post-details">
         <div>
           <div className="left">
-            <div className="icon" >
+            <div className="icon" onClick={handleLike}>
               <LikeIcon fill={color} color={`${color}`} />
             </div>
             <div className="icon" >
@@ -85,11 +98,7 @@ const Post = ({ post }) => {
           }
         </div>
 
-        <div className="add-comment">
-          Add a comment...
-        </div>
-
-
+        <input className="add-comment" placeholder="Add a comment..." />
       </div>
 
     </div>
