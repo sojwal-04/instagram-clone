@@ -14,13 +14,17 @@ import { formatDistanceToNow } from "date-fns"
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { makeRequest } from "../../utils/makeRequest";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Post = ({ post }) => {
+
+  const user = useSelector(state => state.user.user)
 
   const navigate = useNavigate();
 
   const [color, setColor] = useState("black");
-  const [like, setLike] = useState(null);
+  const [like, setLike] = useState(false);
   const [openComment, setOpenComment] = useState(false);
 
 
@@ -30,19 +34,36 @@ const Post = ({ post }) => {
 
   const handleLike = async () => {
     try {
-      if (like !== null && like) {
-        await makeRequest.delete();
-      } else if (like !== null) {
-        await makeRequest.post();
+      // Check if the post is already liked
+      const isLiked = like;
+  
+      // Determine the action based on the current like status
+      if (isLiked) {
+        // If already liked, unlike the post;
+        console.log("Trying to unlike post");
+        await makeRequest.delete(`/likes/unlike?postIdToUnlike=${post?._id}&unlikedBy=${user?._id}`);
+       
+        console.log("Unliked");
+      } else {
+        // If not liked, like the post
+        console.log("Trying to like post");
+        await makeRequest.post(`/likes/like?postIdToLike=${post?._id}&likedBy=${user?._id}`);
+        console.log("Liked");
       }
-      setLike(!like)
-      toast.success(`${like ? "Unliked" : "Liked"} the post`)
-
+  
+      // Toggle the like state
+      setLike(!isLiked);
+  
+      // Show a success toast message
+      toast.success(`${isLiked ? "Unliked" : "Liked"} the post`);
     } catch (err) {
-      console.log(err);
-      toast.error(`Cannot ${like ? "unlike" : "like"} the post`)
+      console.error(err);
+  
+      // Show an error toast message
+      toast.error(`Cannot ${like ? "unlike" : "like"} the post`);
     }
   }
+  
 
   return (
     <div className="post-container">
@@ -72,7 +93,7 @@ const Post = ({ post }) => {
       <div className="post-details">
         <div>
           <div className="left">
-            <div className="icon" onClick={handleLike}>
+            <div className="icon" onClick={handleLike} style={{ backgroundColor: like ? 'red' : 'initial' }}>
               <LikeIcon fill={color} color={`${color}`} />
             </div>
             <div className="icon" >
