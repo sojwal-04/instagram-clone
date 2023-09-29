@@ -1,32 +1,29 @@
 import "./leftBar.scss"
 
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {List, ListItem, ListItemText } from '@mui/material';
 
-
-
-import InstaHub from "../../assets/instahub.png"
-import { SwipeableDrawer, List, ListItem, ListItemText } from '@mui/material';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import MovieCreationRoundedIcon from '@mui/icons-material/MovieCreationRounded';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import ControlPointRoundedIcon from '@mui/icons-material/ControlPointRounded';
+import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MovieCreationRoundedIcon from '@mui/icons-material/MovieCreationRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { setToken } from "../../redux/slices/authSlice";
-import { useNavigate } from "react-router-dom";
 import { setUser } from "../../redux/slices/userSlice";
+import { useNavigate } from "react-router-dom";
+import InstaHub from "../../assets/instahub.png";
 
-import SS from "../../assets/screenshot2.png"
+
 
 const LeftBar = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector((state) => state.user.user);
+  const user = useSelector((state) => state.user);
 
   const handleLogout = () => {
 

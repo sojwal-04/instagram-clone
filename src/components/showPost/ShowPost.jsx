@@ -1,10 +1,10 @@
 import "./showPost.scss"
 
-import { comments } from "../../data";
-import LikeIcon from "../../assets/LikeIcon";
 import CommentIcon from "../../assets/CommentIcon";
+import LikeIcon from "../../assets/LikeIcon";
 import ShareIcon from "../../assets/ShareIcon";
 import { useNavigate } from "react-router-dom";
+import { comments } from "../../data";
 
 const ShowPost = () => {
 

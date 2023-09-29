@@ -67,13 +67,6 @@ const Login = () => {
       dispatch(setToken(token));
       dispatch(setUser(user));
 
-      console.log("data:", data);
-
-      console.log("token: " + token);
-      console.log("user: " + JSON.stringify(user));
-
-      localStorage.setItem("token", token);
-      // localStorage.setItem("user", user);
       localStorage.setItem('user', JSON.stringify(user));
       navigate("/")
       toast.success(`${inputs.identifier} logged in`);

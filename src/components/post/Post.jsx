@@ -1,30 +1,28 @@
 import "./post.scss"
 
-// import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-// import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import CommentIcon from "../../assets/CommentIcon";
-// import BookmarkBorderIcon from '@material-ui/icons/BookmarkBorder';
-// import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs"
-import { FcLike } from "react-icons/fc"
 import ShareIcon from "../../assets/ShareIcon";
-import LikeIcon from "../../assets/LikeIcon";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { formatDistanceToNow } from "date-fns"
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { makeRequest } from "../../utils/makeRequest";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setPost } from "../../redux/slices/homePostsSlice";
 
-const Post = ({ post }) => {
+const Post = ({ post, index }) => {
 
-  const user = useSelector(state => state.user.user)
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
+  const user = useSelector(state => state.user)
+
   const [color, setColor] = useState("black");
-  const [like, setLike] = useState(false);
+  const [like, setLike] = useState(null);
   const [openComment, setOpenComment] = useState(false);
 
 
@@ -32,38 +30,57 @@ const Post = ({ post }) => {
     addSuffix: false, // Adds "ago" or "from now"
   });
 
+
+  useEffect(() => {
+    // Function to fetch like status when the component mounts
+    const fetchLikeStatus = async () => {
+      try {
+        if (user?._id) {
+          // Check if the user has liked the post
+          const { data } = await makeRequest.get(`/likes/getLike?postId=${post?._id}&userId=${user?._id}`);
+          setLike(data.like !== null);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchLikeStatus(); // Fetch like status when the component mounts
+  }, [post, user]);
+
   const handleLike = async () => {
     try {
       // Check if the post is already liked
       const isLiked = like;
-  
+
+      const  updatedPost  = { ...post };
+
       // Determine the action based on the current like status
       if (isLiked) {
         // If already liked, unlike the post;
-        console.log("Trying to unlike post");
         await makeRequest.delete(`/likes/unlike?postIdToUnlike=${post?._id}&unlikedBy=${user?._id}`);
-       
-        console.log("Unliked");
+        updatedPost.likesCount -= 1;
       } else {
         // If not liked, like the post
-        console.log("Trying to like post");
         await makeRequest.post(`/likes/like?postIdToLike=${post?._id}&likedBy=${user?._id}`);
-        console.log("Liked");
+        // console.log("Liked");
+        updatedPost.likesCount += 1;
       }
-  
-      // Toggle the like state
+      console.log("first updated post", updatedPost);
+      
       setLike(!isLiked);
-  
+      dispatch(setPost({index, updatedPost}))
+      console.log("second updated post", updatedPost);
+
       // Show a success toast message
       toast.success(`${isLiked ? "Unliked" : "Liked"} the post`);
     } catch (err) {
       console.error(err);
-  
+
       // Show an error toast message
       toast.error(`Cannot ${like ? "unlike" : "like"} the post`);
     }
   }
-  
+
 
   return (
     <div className="post-container">
@@ -86,15 +103,25 @@ const Post = ({ post }) => {
         </div>
       </div>
 
-      <div className="post-image">
+      <div className="post-image" onDoubleClick={handleLike}>
         <img src={post?.imageUrl} alt="image" />
       </div>
 
       <div className="post-details">
         <div>
           <div className="left">
-            <div className="icon" onClick={handleLike} style={{ backgroundColor: like ? 'red' : 'initial' }}>
-              <LikeIcon fill={color} color={`${color}`} />
+            <div className="icon" onClick={handleLike} >
+              {like ? (
+                <FavoriteOutlinedIcon
+                  className={`like-icon ${like ? 'liked' : ''}`}
+                // style={{ color: "red" }}
+                />
+              ) : (
+                <FavoriteBorderOutlinedIcon
+                  className={`like-icon`}
+
+                />
+              )}
             </div>
             <div className="icon" >
               <CommentIcon color={color} />
@@ -109,13 +136,13 @@ const Post = ({ post }) => {
         </div>
 
         <div className="likes-count">
-          {`${post?.likes ?? 0} likes`}
+          {`${post?.likesCount ?? 0} ${post?.likesCount > 1 ? "likes" : "like"}`}
         </div>
 
         <div className="comments-count">
           {
             post?.comments > 0 &&
-            `View all ${post?.comments} comments`
+            `View all ${post?.commentsCount} comments`
           }
         </div>
 

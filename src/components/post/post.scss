@@ -58,7 +58,6 @@
     justify-content: center;
     overflow: hidden;
     object-fit: contain;
-    cursor: pointer;
 
     img {
       width: 100%;
@@ -79,20 +78,34 @@
       align-items: center;
       gap: 10px;
 
-
       .icon {
         cursor: pointer;
         transition: transform 100ms ease-in-out;
+
+        .like-icon {
+          font-size: 28px;
+          animation: growAndShrink 0.2s ease-in-out; // Apply the animation
+          transition: color 700ms ease; // Add transitions for color changes
+
+          &.liked{
+            color: red; // Change the color when liked
+          }
+        }
       }
 
       .icon:hover {
         transform: scale(1.05);
       }
-
-      .like-icon {
-        font-size: 30px;
-      }
-
     }
+  }
+}
+
+@keyframes growAndShrink {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
   }
 }

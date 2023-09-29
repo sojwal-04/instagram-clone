@@ -22,9 +22,9 @@ const Profile = () => {
 
   const profileDetails = useSelector((state) => state.profile.profileDetails);
 
-  const myUser = useSelector(state => state.user.user)
+  const user = useSelector(state => state.user)
   // /*
-  const user = {
+  const myUser = {
     userBio: "Attitude is Everything",
     likes: 100,
     comments: 34
@@ -37,11 +37,11 @@ const Profile = () => {
       const updatedProfileDetails = { ...profileDetails }; // Create a copy of profileDetails
 
       if (following !== null && following) {
-        url = `/relationships/unfollow?followerId=${myUser?._id}&userIdToUnfollow=${profileDetails?._id}`;
+        url = `/relationships/unfollow?followerId=${user?._id}&userIdToUnfollow=${profileDetails?._id}`;
         await makeRequest.delete(url);
         updatedProfileDetails.followersCount--; // Decrement followingCount
       } else if (following !== null) {
-        url = `/relationships/follow?followerId=${myUser?._id}&userIdToFollow=${profileDetails?._id}`;
+        url = `/relationships/follow?followerId=${user?._id}&userIdToFollow=${profileDetails?._id}`;
         await makeRequest.post(url);
         updatedProfileDetails.followersCount++; // Increment followingCount
       }
@@ -61,7 +61,7 @@ const Profile = () => {
   const fetchRelationship = async () => {
     try {
       console.log("Fetching relationship");
-      const { data } = await makeRequest.get(`/relationships/fetchRelationship?follower=${myUser?.username}&following=${username}`);
+      const { data } = await makeRequest.get(`/relationships/fetchRelationship?follower=${user?.username}&following=${username}`);
       console.log("Fetching relationship 2");
       setFollowing(JSON.stringify(data.relationship) ? true : false)
     } catch (err) {
@@ -134,7 +134,7 @@ const Profile = () => {
           <div className="user-details">
             <div className="username">{profileDetails?.username}</div>
             {
-              myUser?.username === username ?
+              user?.username === username ?
                 (
                   <button >Edit Profile</button>
                 )
@@ -156,7 +156,7 @@ const Profile = () => {
 
           <div className="name">{profileDetails?.name}</div>
 
-          <div className="user-bio">{user?.userBio} </div>
+          <div className="user-bio">{myUser?.userBio} </div>
         </div>
       </div>
 
