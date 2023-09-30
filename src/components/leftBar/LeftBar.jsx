@@ -93,7 +93,7 @@ const LeftBar = () => {
           <ControlPointRoundedIcon className="icon" />
           <ListItemText primary="Create" className="text" />
         </ListItem>
-        <ListItem key="profile" onClick={() => navigate(`/${user?.username}`)} className="list-item">
+        <ListItem key="profile" onClick={() => navigate(`/users/${user?.username}`)} className="list-item">
           <div className="icon profilePic">
             <img src={user?.profilePic} alt="" />
           </div>

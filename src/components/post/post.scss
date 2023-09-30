@@ -97,6 +97,42 @@
         transform: scale(1.05);
       }
     }
+
+    .add-comment {
+      display: flex;
+
+      input {
+        // background-color: whitesmoke;
+        background-color: transparent;
+        border: none;
+        padding: 12px;
+        flex-grow: 1;
+        border-radius: 5px;
+        color: black;
+        font-weight: 500;
+        overflow: scroll;
+      }
+
+      input::placeholder {
+        color: gray;
+      }
+
+      input:focus {
+        outline: blue; /* Remove the default outline */
+        border-color: blue; /* Use the initial border color (if defined) */
+      }
+
+      .post-btn {
+        appearance: none;
+        border: none;
+        color: rgba(0, 148, 246, 0.75);
+        padding: 5px 10px;
+        background-color: white;
+        font-weight: bold;
+        letter-spacing: 1px;
+        cursor: pointer;
+      }
+    }
   }
 }
 

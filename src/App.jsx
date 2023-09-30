@@ -33,13 +33,13 @@ function App() {
           />
 
           <Route
-            path="/:username"
+            path="/users/:username"
             element={
               <ProtectedRoute>
                 <Profile />
               </ProtectedRoute>
-            } />
-          {/* <Route path="/" element={<Home/>}/> */}
+            }
+          />
         </Routes>
 
       </div>

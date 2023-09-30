@@ -1,20 +1,13 @@
 import "./signUp.scss"
 
 import { Link, useNavigate } from "react-router-dom"
-// import instance from "../../axios/axios"
-
-import axios from "axios"
-
 import InstaHubName from "../../assets/instahub.png"
 import PlayStore from "../../assets/playStore.png"
 import MicrosoftStore from "../../assets/microsoftStore.png"
 import Footer from "../../components/footer/Footer"
 import { useState } from "react"
 import toast from "react-hot-toast"
-
-
-//LACKS SIGNUP FUNCTIONALITY
-
+import { makeRequest } from "../../utils/makeRequest"
 
 const SignUp = () => {
 
@@ -31,7 +24,17 @@ const SignUp = () => {
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+
+    // Validate the username field
+    if (name === 'username') {
+      const validUsername = /^[a-z][a-z0-9]{0,19}$/;
+      if (!validUsername.test(value)) {
+        toast.error('Username must start with a letter, contain only lowercase letters and numbers, and have a maximum length of 20 characters.');
+      }
+    }
+
+    setInputs((prev) => ({ ...prev, [name]: value }));
   };
 
 
@@ -43,22 +46,22 @@ const SignUp = () => {
     e.preventDefault();
     try {
 
-      // const res = await instance.post("/auth/signup", inputs);
-      const res = await axios.post("http://localhost:8001/api/v1/auth/signup", inputs);
+      const { data } = await makeRequest.post("/auth/signup", inputs);
 
-      
-      if (res?.data?.success) {
-        console.log("Signup successful");
-        const userId = res.data.userId;
-        navigate(`/users/${userId}`)
-        toast.success(res.data.message);
+      console.log("Data: " + JSON.stringify(data));
+
+
+      if (data?.success) {
+        setTimeout(() => {
+          navigate(`/login`);
+        }, 2000);
+        toast.success(data.message);
       } else {
-        console.log("Signup failed");
+        toast.error(data.message)
       }
     } catch (err) {
-      console.log("Error while signing up ", err);
       setError(err);
-      toast.error(error)
+      toast.error("Error while signing up")
     }
   }
 
@@ -121,7 +124,7 @@ const SignUp = () => {
         </div>
 
         <div>
-          Have an account? <Link className="link" to="/">Log in</Link>
+          Have an account? <Link className="link" to="/login">Log in</Link>
         </div>
 
         <div>

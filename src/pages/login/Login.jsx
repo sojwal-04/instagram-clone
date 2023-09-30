@@ -13,18 +13,12 @@ import PlayStore from "../../assets/playStore.png"
 import MicrosoftStore from "../../assets/microsoftStore.png"
 import Footer from "../../components/footer/Footer"
 import toast from "react-hot-toast"
-// import useFetch from "../../hooks/useFetch"
-import axios from "axios"
 import { useDispatch } from "react-redux"
 import { setToken } from "../../redux/slices/authSlice"
 import { setUser } from "../../redux/slices/userSlice"
+import { makeRequest } from "../../utils/makeRequest"
 
 const screenshots = [ScreenShot1, ScreenShot2, ScreenShot3, ScreenShot4];
-
-//LACKS LOGIN FUNCTIONLITY
-
-const baseUrl = import.meta.env.VITE_APP_BASE_URL;
-
 
 const Login = () => {
 
@@ -58,15 +52,18 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${baseUrl}/auth/login`, inputs, {
+      const { data } = await makeRequest.post('/auth/login', inputs, {
         withCredentials: true,
       });
 
       const { token, user } = data;
 
+      console.log("After login data: " + token);
+
       dispatch(setToken(token));
       dispatch(setUser(user));
 
+      localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       navigate("/")
       toast.success(`${inputs.identifier} logged in`);
@@ -78,7 +75,7 @@ const Login = () => {
           toast.error("User not found. Please check your credentials.");
         } else if (err.response.status === 401) {
           toast.error("Incorrect password. Please try again.");
-        } else if(err.response.status === 400){
+        } else if (err.response.status === 400) {
           toast.error("An error occurred. Please check your connection.");
         }
       } else if (err.request) {

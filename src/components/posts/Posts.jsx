@@ -16,14 +16,18 @@ const Posts = () => {
 
   const posts = useSelector(state => state.homePosts)
 
+  // const[posts, setPosts] = useState([])
+
   useEffect(() => {
     const fetchPosts = async () => {
-      if (user && user._id) {
+      if (user._id) {
         try {
           setLoading(true);
           const { data } = await makeRequest.get(`/posts/getPosts?userId=${user?._id}`);
           setLoading(false);
+          // console.log("Posts : " + JSON.stringify(data.posts));
           dispatch(setPosts(data.posts));
+          // setPosts(data.posts);
         } catch (err) {
           setError(err);
           setLoading(false);
@@ -35,7 +39,9 @@ const Posts = () => {
     };
 
     fetchPosts();
-  }, [user]);
+  }, []);
+
+  console.log("posts" , posts);
 
   return (
     <div className="posts-container">

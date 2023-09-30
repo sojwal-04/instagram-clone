@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }) => {
 
   const navigate = useNavigate();
   const token = useSelector((state) => state.auth.token);
-
+  
   useEffect(() => {
     if (!token) {
       console.log("This is token : ", token);

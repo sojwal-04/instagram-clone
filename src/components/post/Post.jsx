@@ -7,7 +7,7 @@ import ShareIcon from "../../assets/ShareIcon";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { formatDistanceToNow } from "date-fns"
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { makeRequest } from "../../utils/makeRequest";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,8 @@ const Post = ({ post, index }) => {
 
   const [color, setColor] = useState("black");
   const [like, setLike] = useState(null);
-  const [openComment, setOpenComment] = useState(false);
+  const [commentText, setCommentText] = useState("");
+
 
 
   let timeStamp = formatDistanceToNow(new Date(post?.createdAt), {
@@ -32,54 +33,75 @@ const Post = ({ post, index }) => {
 
 
   useEffect(() => {
-    // Function to fetch like status when the component mounts
     const fetchLikeStatus = async () => {
       try {
         if (user?._id) {
           // Check if the user has liked the post
-          const { data } = await makeRequest.get(`/likes/getLike?postId=${post?._id}&userId=${user?._id}`);
+          console.log("fetching like");
+          const response = await makeRequest.get(`/likes/getLike?postId=${post?._id}&userId=${user?._id}`);
+          console.log("REsponse", response);
+
+          const { data } = response;
+          console.log("Data: " + data);
+
           setLike(data.like !== null);
+          console.log("like is ", data.like);
         }
       } catch (err) {
         console.error(err);
       }
     };
-    fetchLikeStatus(); // Fetch like status when the component mounts
+    fetchLikeStatus();
   }, [post, user]);
 
   const handleLike = async () => {
     try {
-      // Check if the post is already liked
       const isLiked = like;
 
-      const  updatedPost  = { ...post };
-
-      // Determine the action based on the current like status
+      const updatedPost = { ...post };
       if (isLiked) {
-        // If already liked, unlike the post;
         await makeRequest.delete(`/likes/unlike?postIdToUnlike=${post?._id}&unlikedBy=${user?._id}`);
         updatedPost.likesCount -= 1;
+        setLike(!isLiked);
       } else {
-        // If not liked, like the post
         await makeRequest.post(`/likes/like?postIdToLike=${post?._id}&likedBy=${user?._id}`);
-        // console.log("Liked");
         updatedPost.likesCount += 1;
+        setLike(!isLiked);
       }
-      console.log("first updated post", updatedPost);
-      
-      setLike(!isLiked);
-      dispatch(setPost({index, updatedPost}))
-      console.log("second updated post", updatedPost);
-
-      // Show a success toast message
+      dispatch(setPost({ index, updatedPost }))
       toast.success(`${isLiked ? "Unliked" : "Liked"} the post`);
     } catch (err) {
-      console.error(err);
-
-      // Show an error toast message
       toast.error(`Cannot ${like ? "unlike" : "like"} the post`);
     }
   }
+
+  const handleComment = async () => {
+    try {
+      // Check if the comment text is not empty
+      const updatedPost = { ...post };
+
+      if (commentText.trim() !== "") {
+        // Make a request to post the comment
+        await makeRequest.post("/comments/postComment", {
+          postId: post._id,
+          userId: user._id,
+          text: commentText,
+        });
+
+        toast.success("Comment posted successfully");
+        updatedPost.commentsCount += 1;
+        dispatch(setPost({ index, updatedPost }))
+        // Clear the comment text
+        setCommentText("");
+      } else {
+        // Handle the case where the comment text is empty
+        // console.log("Comment text is empty");
+        toast.success("Error while posting comment");
+      }
+    } catch (err) {
+      console.error("Error posting comment:", err);
+    }
+  };
 
 
   return (
@@ -89,7 +111,7 @@ const Post = ({ post, index }) => {
           <div className="profilePic">
             <img src={post?.user?.profilePic} alt="profilePic" />
           </div>
-          <div className="username" onClick={() => navigate(`/${post?.user?.username}`)}>
+          <div className="username" onClick={() => navigate(`/users/${post?.user?.username}`)}>
             <div className=" reference-link username">
               {post?.user?.username}
             </div>
@@ -141,12 +163,25 @@ const Post = ({ post, index }) => {
 
         <div className="comments-count">
           {
-            post?.comments > 0 &&
-            `View all ${post?.commentsCount} comments`
+            post?.commentsCount > 0 &&
+            `View  ${post?.commentsCount > 1 ? "all" : ""} ${post?.commentsCount} ${post?.commentsCount > 1 ? "comments" : "comment"} `
           }
         </div>
 
-        <input className="add-comment" placeholder="Add a comment..." />
+        <div className="add-comment">
+          <input
+            placeholder="Add a comment..."
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)} // Update the comment text state
+          />
+          <button
+            className="post-btn"
+            onClick={handleComment}
+            style={{ display: commentText.trim() === "" ? "none" : "block" }} // Disable the button if commentText is empty
+          >
+            Post
+          </button>
+        </div>
       </div>
 
     </div>

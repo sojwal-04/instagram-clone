@@ -1,15 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  profileDetails: {
     _id: 0,
-    username: "myalina",
+    username: "",
     profilePic: "",
     name: "",
     postCount: 0,
     followingCount: 0,
     followersCount: 0,
-  },
 };
 
 const profileSlice = createSlice({
@@ -17,7 +15,7 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     setProfile: (state, action) => {
-      state.profileDetails = action.payload;
+      return action.payload;
     },
   },
 });

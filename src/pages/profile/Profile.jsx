@@ -5,13 +5,15 @@ import { useDispatch, useSelector } from "react-redux";
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import CommentIcon from "../../assets/CommentIcon";
 import Footer from "../../components/footer/Footer";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { makeRequest } from "../../utils/makeRequest";
 import toast from "react-hot-toast";
 import { setProfile } from "../../redux/slices/profileSlice";
 
 const Profile = () => {
+
+  
 
   const dispatch = useDispatch();
 
@@ -20,7 +22,7 @@ const Profile = () => {
   const [following, setFollowing] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  const profileDetails = useSelector((state) => state.profile.profileDetails);
+  const profileDetails = useSelector((state) => state.profile);
 
   const user = useSelector(state => state.user)
   // /*
@@ -29,7 +31,6 @@ const Profile = () => {
     likes: 100,
     comments: 34
   }
-  // */
 
   const handleFollow = async () => {
     try {
@@ -74,16 +75,8 @@ const Profile = () => {
   const fetchProfileDetails = async () => {
     try {
       const { data } = await makeRequest.get(`/profile/${username}`);
-
-      console.log("inside the functinosss");
-
       const profileData = data?.profileDetails;
-
-      console.log("Setting details ; ", profileData);
-
-      // Dispatch the setProfile action to update Redux store
       dispatch(setProfile(profileData));
-
       fetchRelationship();
     } catch (err) {
       console.log(err);
@@ -92,23 +85,23 @@ const Profile = () => {
   };
 
 
-  /*
-  const fetchPosts = async () => {
-    try {
-      // Fetch user's posts using the user's username (profileDetails.username)
-      const { data } = await makeRequest.get(`/posts/${profileDetails.username}`);
+  // /*
+  // const fetchPosts = async () => {
+  //   try {
+  //     // Fetch user's posts using the user's username (profileDetails.username)
+  //     const { data } = await makeRequest.get(`/posts/${profileDetails.username}`);
 
-      // Update the posts state with the fetched data
-      setPosts(data.posts);
+  //     // Update the posts state with the fetched data
+  //     setPosts(data.posts);
 
-      console.log("Fetched posts:", data.posts);
-    } catch (err) {
-      console.log(err);
-      toast.error("Error while fetching posts");
-    }
-  };
+  //     console.log("Fetched posts:", data.posts);
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Error while fetching posts");
+  //   }
+  // };
 
-  */
+  // */
 
   useEffect(() => {
     fetchProfileDetails();
@@ -118,6 +111,8 @@ const Profile = () => {
 
 
   // ... (rest of the code)
+
+  console.log(profileDetails);
 
 
   return (
