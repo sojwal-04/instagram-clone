@@ -1,39 +1,94 @@
 import "./showPost.scss"
 
 import CommentIcon from "../../assets/CommentIcon";
-import LikeIcon from "../../assets/LikeIcon";
+// import LikeIcon from "../../assets/LikeIcon";
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import ShareIcon from "../../assets/ShareIcon";
-import { useNavigate } from "react-router-dom";
-import { comments } from "../../data";
+import { formatDistanceToNow } from "date-fns"
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+// import { comments } from "../../data";
+import { useEffect, useState } from "react";
+import { makeRequest } from "../../utils/makeRequest";
+import { useDispatch, useSelector } from "react-redux";
+import { setComments } from "../../redux/slices/commentsSlice";
 
 const ShowPost = () => {
 
+  const { postId } = useParams();
+  const user = useSelector(state => state.user)
+
+  const dispatch = useDispatch();
+
+  const comments = useSelector((state) => state.comments)
+
+  console.log(comments);
+  console.log(postId);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const post = location.state.post;
+
+  const [loading, setLoading] = useState(true);
+  const [like, setLike] = useState(null);
+
+  useEffect(() => {
+    const fetchLikeStatus = async () => {
+      try {
+        if (user?._id) {
+          // Check if the user has liked the post
+          const { data } = await makeRequest.get(`/likes/getLike?postId=${post?._id}&userId=${user?._id}`);
+          setLike(data.like !== null);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchLikeStatus();
+    const fetchComments = async () => {
+      try {
+        setLoading(true);
+        const { data } = await makeRequest.get(`/comments/fetchComments?postId=${postId}`);
+        dispatch(setComments(data?.comments))
+        console.log("Data", data.comments);
+        console.log("DATA", data);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false)
+        console.log(err);
+      }
+    }
+
+    fetchComments();
+  }, [])
 
   let show = true;
   let color = "black";
 
   let username = "sojwal._";
 
-  const obj = {
-    imageUrl: "https://imgv3.fotor.com/images/blog-cover-image/part-blurry-image.jpg",
-  }
+
+  let timeStamp = formatDistanceToNow(new Date(post?.createdAt), {
+    addSuffix: true, // Adds "ago" or "from now"
+  });
 
   return (
     <div className={`showpost-container ${show ? "show" : ""}`}>
+
       <div className="showpost">
         <div className="left">
-          <img src={obj.imageUrl} alt="" />
+          <img src={post.imageUrl} alt="" />
         </div>
 
         <div className="right">
           <div className="top">
             <div className="top-left">
               <div className="profilePic">
-                <img src={obj.imageUrl} alt="" />
+                <img src={post?.user?.profilePic} alt="" />
               </div>
               <p>
-                alina._
+                {post?.user?.username}
               </p>
             </div>
             <div className="top-right">
@@ -43,12 +98,15 @@ const ShowPost = () => {
           <div className="comments">
             {
               comments?.map((comment) => (
-                <div key={comment.id} className="comment">
+                <div key={comment._id} className="comment">
                   <div className="profilePic">
-                    <img src={comment.imageUrl} alt="" />
+                    <img src={comment.user.profilePic} alt="" />
                   </div>
                   <div className="comment-content">
-                    <span id="username" onClick={() => navigate(`/${username}`)} >{comment.username}</span>{`  ${comment.text}`}
+                    <span id="username" onClick={() => navigate(`/users/${username}`)} >
+                      {comment.user.username}
+                    </span>
+                    {` ${comment.text}`}
                   </div>
                 </div>
               ))
@@ -58,7 +116,15 @@ const ShowPost = () => {
           <div className="post-details">
             <div className="icons">
               <div className="icon" >
-                <LikeIcon fill={color} color={`${color}`} />
+                {like ? (
+                  <FavoriteOutlinedIcon
+                    className={`like-icon ${like ? 'liked' : ''}`}
+                  />
+                ) : (
+                  <FavoriteBorderOutlinedIcon
+                    className={`like-icon`}
+                  />
+                )}
               </div>
               <div className="icon" >
                 <CommentIcon color={color} />
@@ -68,8 +134,8 @@ const ShowPost = () => {
               </div>
             </div>
             <div>
-              <p>{`${19292} likes`}</p>
-              <p>25 days</p>
+              <p>{`${post?.likesCount} likes`}</p>
+              <p>{timeStamp}</p>
             </div>
             <div className="add-comment">
               <input type="text" placeholder="Add a comment..." />
@@ -78,6 +144,7 @@ const ShowPost = () => {
           </div>
         </div>
       </div>
+
     </div>
 
   );

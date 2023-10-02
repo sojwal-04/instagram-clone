@@ -1,10 +1,12 @@
 import "./posts.scss"
+import "../../main.scss"
 
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import Post from "../post/Post";
 import { makeRequest } from "../../utils/makeRequest";
 import { setPosts } from "../../redux/slices/homePostsSlice";
+import LoadingPosts from "./LoadingPosts";
 
 const Posts = () => {
 
@@ -16,18 +18,14 @@ const Posts = () => {
 
   const posts = useSelector(state => state.homePosts)
 
-  // const[posts, setPosts] = useState([])
-
   useEffect(() => {
     const fetchPosts = async () => {
       if (user._id) {
         try {
           setLoading(true);
-          const { data } = await makeRequest.get(`/posts/getPosts?userId=${user?._id}`);
-          setLoading(false);
-          // console.log("Posts : " + JSON.stringify(data.posts));
+          const { data } = await makeRequest.get(`/posts/getPosts?userId=${user?._id}&isHome=${"isHome"}`);
           dispatch(setPosts(data.posts));
-          // setPosts(data.posts);
+          setLoading(false);
         } catch (err) {
           setError(err);
           setLoading(false);
@@ -41,19 +39,27 @@ const Posts = () => {
     fetchPosts();
   }, []);
 
-  console.log("posts" , posts);
+
 
   return (
     <div className="posts-container">
-      {loading ? (
-        <p style={{ color: "green" }}>Loading</p>
-      ) : error ? (
-        <p style={{ color: "red" }}>Error: {error.message}</p>
-      ) : (
-        posts?.map((post, index) => (
-          <Post key={post._id} index={index} post={post} />
-        ))
-      )}
+      {
+        loading ? (
+          <>
+            <LoadingPosts />
+            <LoadingPosts />
+            <LoadingPosts />
+            <LoadingPosts />
+            <LoadingPosts />
+          </>
+        ) : error ? (
+          <p style={{ color: "red" }}>Error: {error.message}</p>
+        ) : (
+          posts?.map((post, index) => (
+            <Post key={post._id} index={index} post={post} />
+          ))
+        )
+      }
     </div>
   );
 };

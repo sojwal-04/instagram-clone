@@ -3,15 +3,16 @@ import "./post.scss"
 import CommentIcon from "../../assets/CommentIcon";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs"
+import CloseIcon from '@mui/icons-material/Close';
 import ShareIcon from "../../assets/ShareIcon";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
 import { formatDistanceToNow } from "date-fns"
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { makeRequest } from "../../utils/makeRequest";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "../../redux/slices/homePostsSlice";
+import { deletePost, setPost } from "../../redux/slices/homePostsSlice";
 
 const Post = ({ post, index }) => {
 
@@ -24,6 +25,7 @@ const Post = ({ post, index }) => {
   const [color, setColor] = useState("black");
   const [like, setLike] = useState(null);
   const [commentText, setCommentText] = useState("");
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
 
 
 
@@ -37,15 +39,8 @@ const Post = ({ post, index }) => {
       try {
         if (user?._id) {
           // Check if the user has liked the post
-          console.log("fetching like");
-          const response = await makeRequest.get(`/likes/getLike?postId=${post?._id}&userId=${user?._id}`);
-          console.log("REsponse", response);
-
-          const { data } = response;
-          console.log("Data: " + data);
-
+          const { data } = await makeRequest.get(`/likes/getLike?postId=${post?._id}&userId=${user?._id}`);
           setLike(data.like !== null);
-          console.log("like is ", data.like);
         }
       } catch (err) {
         console.error(err);
@@ -75,33 +70,45 @@ const Post = ({ post, index }) => {
     }
   }
 
+
+
   const handleComment = async () => {
     try {
       // Check if the comment text is not empty
       const updatedPost = { ...post };
 
       if (commentText.trim() !== "") {
-        // Make a request to post the comment
-        await makeRequest.post("/comments/postComment", {
+
+        const { data } = await makeRequest.post("/comments/postComment", {
           postId: post._id,
           userId: user._id,
           text: commentText,
         });
 
+        const newComment = { data }
+
         toast.success("Comment posted successfully");
         updatedPost.commentsCount += 1;
         dispatch(setPost({ index, updatedPost }))
-        // Clear the comment text
         setCommentText("");
       } else {
-        // Handle the case where the comment text is empty
-        // console.log("Comment text is empty");
         toast.success("Error while posting comment");
       }
     } catch (err) {
       console.error("Error posting comment:", err);
     }
   };
+
+  const handleDeletePost = async () => {
+    try {
+      await makeRequest.delete(`/posts/delete?postId=${post._id}&userId=${user._id}`);
+      toast.success("Post deleted successfully");
+      dispatch(deletePost(post._id));
+    } catch (err) {
+      console.log(err);
+      toast.error("Error while delelete post");
+    }
+  }
 
 
   return (
@@ -121,8 +128,17 @@ const Post = ({ post, index }) => {
           </div>
         </div>
         <div className="right">
-          <BsThreeDots />
+          <button
+            className={`delete-btn ${showDeleteButton && user._id === post.user._id ? "show-delete" : ""}`}
+            onClick={handleDeletePost}
+          >
+            Delete
+          </button>
+          <i onClick={() => setShowDeleteButton(!showDeleteButton)}>
+            {showDeleteButton ? <CloseIcon /> : <BsThreeDots />}
+          </i>
         </div>
+
       </div>
 
       <div className="post-image" onDoubleClick={handleLike}>
@@ -141,11 +157,13 @@ const Post = ({ post, index }) => {
               ) : (
                 <FavoriteBorderOutlinedIcon
                   className={`like-icon`}
-
                 />
               )}
             </div>
-            <div className="icon" >
+            <div
+             className="icon"
+             onClick={() => navigate(`/p/${post?._id}`, { state: { post } })}
+             >
               <CommentIcon color={color} />
             </div>
             <div className="icon" >
@@ -159,6 +177,18 @@ const Post = ({ post, index }) => {
 
         <div className="likes-count">
           {`${post?.likesCount ?? 0} ${post?.likesCount > 1 ? "likes" : "like"}`}
+        </div>
+
+        <div className="caption">
+          <p>
+            <span className="username"
+              style={{ fontWeight: "500" }}
+              onClick={() => navigate(`/users/${post?.user?.username}`)}
+            >
+              {post?.user?.username}
+            </span>
+            {` ${post?.caption}`}
+          </p>
         </div>
 
         <div className="comments-count">

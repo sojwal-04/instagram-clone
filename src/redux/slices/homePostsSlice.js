@@ -19,7 +19,7 @@ const homePostsSlice = createSlice({
 
     deletePost: (state, action) => {
       const postIdToDelete = action.payload; // Assuming action.payload is the post ID to delete
-      return state.filter((post) => post.id !== postIdToDelete);
+      return state.filter((post) => post._id !== postIdToDelete);
     },
 
     addPost: (state, action) => {

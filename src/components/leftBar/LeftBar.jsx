@@ -1,8 +1,7 @@
 import "./leftBar.scss"
 
 import { useDispatch, useSelector } from 'react-redux';
-import {List, ListItem, ListItemText } from '@mui/material';
-
+import { List, ListItem, ListItemText } from '@mui/material';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import ControlPointRoundedIcon from '@mui/icons-material/ControlPointRounded';
 import ExploreRoundedIcon from '@mui/icons-material/ExploreRounded';
@@ -15,8 +14,7 @@ import { setToken } from "../../redux/slices/authSlice";
 import { setUser } from "../../redux/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import InstaHub from "../../assets/instahub.png";
-
-
+import toast from "react-hot-toast";
 
 const LeftBar = () => {
 
@@ -31,25 +29,16 @@ const LeftBar = () => {
 
       dispatch(setToken(null));
       dispatch(setUser(null));
-
-      // Optionally, you can clear the JWT token from localStorage
       localStorage.removeItem('token');
-
-      // Perform any other necessary cleanup or redirection
-      // For example, redirect the user to the login page
       navigate("/login");
+      setTimeout(() => {
+        toast.success("Logged out successfully.")
+      }, 1500);
     } catch (err) {
       console.error('Error while logging out: ' + err.message);
-      // Handle any potential errors here
+      toast.error("Cannot log out the user.")
     }
   };
-
-
-  // const [open, setOpen] = useState(false);
-
-  // const toggleDrawer = (openStatus) => () => {
-  //   setOpen(openStatus);
-  // };
 
   return (
     <div className="leftbar-container">
@@ -57,12 +46,6 @@ const LeftBar = () => {
       <div className="insta-name">
         <img src={InstaHub} alt="" />
       </div>
-      {/* <SwipeableDrawer
-        anchor="left"
-        open={open}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
-      > */}
 
       <List className='list'>
         <ListItem key="home" onClick={() => navigate("/")} className="list-item">
@@ -104,7 +87,6 @@ const LeftBar = () => {
           <ListItemText primary="Logout" className="text" />
         </ListItem>
       </List>
-      {/* </SwipeableDrawer> */}
     </div>
   );
 };

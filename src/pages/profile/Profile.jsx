@@ -1,11 +1,9 @@
 import "./profile.scss"
-// import numeral from "numeral";
-// import { posts } from "../../data"
 import { useDispatch, useSelector } from "react-redux";
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
 import CommentIcon from "../../assets/CommentIcon";
 import Footer from "../../components/footer/Footer";
-import { useLocation, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { makeRequest } from "../../utils/makeRequest";
 import toast from "react-hot-toast";

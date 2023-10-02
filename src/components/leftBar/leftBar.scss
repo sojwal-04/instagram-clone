@@ -2,7 +2,7 @@ $default-icon-size: 30px;
 $hover-icon-size: 32px;
 
 .leftbar-container {
-  position: static;
+  position: sticky;
   display: flex;
   flex-direction: column;
   padding-top: 30px;
@@ -37,16 +37,17 @@ $hover-icon-size: 32px;
         padding-left: 16px;
         height: 27px;
         width: 27px;
-        object-fit: contain;
-        overflow: hidden;
         border-radius: 50%;
         padding: 1px;
         border: 1px solid black;
-
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        overflow: hidden;
+        
         img {
-          align-self: center;
-          // background-image: -o-linear-gradient();
-          // background-image: -o-linear-gradient(top, #ff0000, #0000ff);
+          border-radius: 50%;
+          object-fit: cover;
         }
       }
 
@@ -56,9 +57,9 @@ $hover-icon-size: 32px;
         font-size: $default-icon-size;
         transition: font-size 0.3s;
 
-        // &:hover {
-        //   font-size: $hover-icon-size;
-        // }
+        &:hover {
+          font-size: $hover-icon-size;
+        }
       }
 
       .text {

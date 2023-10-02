@@ -7,6 +7,7 @@ import UserHome from './pages/userHome/UserHome'
 import ProtectedRoute from './ProtectedRoute'
 import Home from './pages/home/Home'
 import Profile from './pages/profile/Profile'
+import ShowPost from './components/showPost/ShowPost'
 // import Profile from './pages/profile/Profile'
 
 
@@ -40,6 +41,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/p/:postId"
+            element={
+              <ProtectedRoute>
+                <ShowPost />
+              </ProtectedRoute>
+            }
+          />
+
         </Routes>
 
       </div>

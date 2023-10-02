@@ -9,13 +9,14 @@ import ShowPost from "../../components/showPost/ShowPost"
 
 const Home = () => {
   return (
-    <div className="container home-container">
-      <LeftBar />
+    <div className="home-container">
+      {/* <div className="leftBar"> */}
+      <LeftBar style={{overflowY: "scroll" }} />
+      <div style={{display: "flex", flex: "6" }}>
+        <Main />
+        <RightBar />
+      </div>
 
-      <Main />
-      <RightBar />
-
-      {/* <ShowPost /> */}
 
 
       {/* <Profile/> */}

@@ -12,11 +12,9 @@
   .user {
     display: flex;
     justify-content: space-between;
-    // background: green;
     margin-bottom: 30px;
 
     .left {
-      // background-color: red;
       position: relative;
       width: 34%;
       display: flex;
@@ -24,22 +22,19 @@
       justify-content: center;
 
       .profilePic {
-        position: absolute;
+        position: relative;
         top: 0;
         height: 150px;
         width: 150px;
-        // aspect-ratio: 1/1;
         border-radius: 50%;
-        border: 2px solid rgba(0, 0, 0, 0.49);
-        background-color: rgba(26, 237, 244, 0.925);
         display: flex;
-        justify-content: center; /* Center horizontally */
-        align-items: center; /* Center vertically */
+        justify-content: center;
+        align-items: center;
         overflow: hidden;
-      
+
         img {
-          width: 97%; /* Use 100% to fill the .profilePic div */
-          height: 97%; /* Use 100% to fill the .profilePic div */
+          width: 100%;
+          height: 100%;
           border-radius: 50%;
           object-fit: cover;
         }
@@ -47,7 +42,7 @@
     }
 
     .right {
-      // background-color: yellow;
+      min-height: 100px;
       width: 66%;
       display: flex;
       flex-direction: column;
@@ -68,7 +63,7 @@
           cursor: pointer;
         }
 
-        .btn-primary{
+        .btn-primary {
           background: rgba(0, 148, 246, 0.75);
           color: white;
         }
